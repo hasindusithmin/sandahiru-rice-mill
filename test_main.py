@@ -187,4 +187,33 @@ def test_delete_transaction_not_found():
     res = client.delete(url=f"/transaction/{id}")
     assert res.status_code == 404
 
+def test_delete_transaction_accepted():
+    id = 2
+    # Get stock_id and bag 
+    res1 = client.get(f"/transaction/{id}")
+    bd1 = res1.json()
+    bags = {"5KILO":"small","10KILO":"medium","25KILO":"large"}
+    stock_id,bag,qty = bd1['stock_id'],bags[bd1['bag']],bd1['quantity']
+    prevQty = 0
+    with Session(engine) as session:
+        stock = session.get(Stock,stock_id)
+        # stock:Stock -> stock:dict 
+        stock = stock.__dict__
+        prevQty = stock[bag]
+    # Fire delete request
+    res2 = client.delete(url=f"/transaction/{id}")
+    # Check status code 
+    assert res2.status_code == 202
+    # Check If transaction Delete 
+    with Session(engine) as session:
+        transaction = session.get(Transaction,id)
+        assert transaction is None
+    # Check If stock table update 
+    with Session(engine) as session:
+        stock = session.get(Stock,stock_id)
+        # stock:Stock -> stock:dict 
+        stock = stock.__dict__
+        Qty = stock[bag]
+        assert Qty == prevQty + qty
 
+    

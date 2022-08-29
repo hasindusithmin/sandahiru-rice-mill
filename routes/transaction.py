@@ -38,6 +38,15 @@ async def get_transaction():
         statement = select(Transaction)
         return session.exec(statement).all()
 
+# Read one transaction by id (this is required for testing)
+@router.get("/{id}",status_code=200,response_model=Transaction)
+async def get_transaction_by_id(id:int):
+    with Session(engine) as session:
+        transaction = session.get(Transaction,id)
+        if transaction is None:
+            raise HTTPException(status_code=404)
+        return transaction
+
 # Delete transaction By Id
 @router.delete("/{id}",status_code=202)
 async def delete_transaction(id:int):
@@ -54,7 +63,7 @@ async def delete_transaction(id:int):
         stock = session.get(Stock,stock_id)
         # print(stock)
         qty = transaction.quantity
-        # If stock not exist
+        # If stock not exist (Very Optinal)
         if stock is None:
             raise HTTPException(status_code=404)
         exec(f"if qty > stock.{bag}:\n\traise HTTPException(status_code=400,detail='insufficient quantity')")
