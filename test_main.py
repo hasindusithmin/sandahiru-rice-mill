@@ -4,6 +4,9 @@ from main import app
 from models import Stock
 from sqlmodel import Session,select
 from database import engine
+from random import randint
+
+#########################################
 
 # Create Test Client 
 client = TestClient(app)
@@ -40,3 +43,54 @@ def test_get_stock():
             # Check large
             assert obj_db.large == obj_bd.large
 
+def test_update_stock():
+    id = 1
+    data = {
+        'unit':randint(200, 300),
+        'small':randint(0, 100),
+        'medium':randint(0, 100),
+        'large':randint(0, 100)
+    }
+    res = client.put(url=f"/stock/{id}",json=data)
+
+    # Check status code 
+    assert res.status_code == 202
+
+    # Check data 
+    with Session(engine) as session:
+        # Data in database 
+        db = session.get(Stock,id)
+        # Data in response body(bd)
+        bd = res.json()
+        # `bd:dict` to `bd:Stock` 
+        bd = Stock(**bd)    
+        # Check id
+        assert db.id == bd.id
+        # Check name
+        assert db.name == bd.name
+        # Check unit
+        assert db.unit == bd.unit
+        # Check small
+        assert db.small == bd.small
+        # Check medium
+        assert db.medium == bd.medium
+        # Check large
+        assert db.large == bd.large
+
+def test_update_stock_not_found():
+    id = 100
+    data = {
+        "unit":randint(200, 300)
+    }
+    res = client.put(url=f"/stock/{id}",json=data)
+    # Check status code is 404
+    assert res.status_code == 404
+
+def test_update_stock_unprocessable_entity():
+    id = 1
+    data = {
+        "unit":"2hundred"
+    }
+    res = client.put(url=f"/stock/{id}",json=data)
+    # Check status code is 422
+    assert res.status_code == 422
