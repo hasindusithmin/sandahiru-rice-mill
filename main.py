@@ -2,7 +2,7 @@
 from fastapi import FastAPI
 from models import Stock,Transaction
 from database import create_db_and_table
-from routes import stock
+from routes import (stock,transaction)
 
 app = FastAPI()
 
@@ -15,7 +15,7 @@ def root():
     return
 
 app.include_router(stock.router)
-
+app.include_router(transaction.router)
 
 
 

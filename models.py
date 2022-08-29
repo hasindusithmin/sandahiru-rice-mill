@@ -7,9 +7,9 @@ from enum import Enum
 
 
 class Bag(str,Enum):
-    SMALL = "5 KILO"
-    MEDIUM = "10 KILO"
-    LARGE = "25 KILO"
+    SMALL = "5KILO"
+    MEDIUM = "10KILO"
+    LARGE = "25KILO"
 
 
 class Stock(SQLModel,table=True):
@@ -25,5 +25,5 @@ class Transaction(SQLModel,table=True):
     date:Optional[datetime] = Field(default=datetime.now(tz=timezone("Asia/Colombo")))
     bag:Bag = Field(nullable=False)
     quantity:int = Field(nullable=False)
-    price:float = Field(nullable=False)
+    price:Optional[float] = Field(default=None)
     stock_id:Optional[int] = Field(default=None,foreign_key="stock.id")
