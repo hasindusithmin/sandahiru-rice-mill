@@ -98,9 +98,9 @@ def test_update_stock_unprocessable_entity():
 def test_create_transaction():
 
     data = {
-        'bag':'10KILO',
-        'quantity':2,
-        'stock_id':2
+        'bag':'25KILO',
+        'quantity':1,
+        'stock_id':3
     }
     # Fire the request
     res = client.post(url="/transaction",json=data,allow_redirects=True)
