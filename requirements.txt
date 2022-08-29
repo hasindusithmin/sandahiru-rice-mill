@@ -1,5 +1,4 @@
 fastapi
 sqlmodel
-typing
-pydantic
 pytz
+uvicorn
