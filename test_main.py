@@ -8,7 +8,7 @@ from database import engine
 # Create Test Client 
 client = TestClient(app)
 
-def test_get_stock_details():
+def test_get_stock():
     res = client.get(url="/stock")
     # Check Status Code 
     assert res.status_code == 200
