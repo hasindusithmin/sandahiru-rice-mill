@@ -25,4 +25,5 @@ class Transaction(SQLModel,table=True):
     date:Optional[datetime] = Field(default=datetime.now(tz=timezone("Asia/Colombo")))
     bag:Bag = Field(nullable=False)
     quantity:int = Field(nullable=False)
+    price:float = Field(nullable=False)
     stock_id:Optional[int] = Field(default=None,foreign_key="stock.id")
