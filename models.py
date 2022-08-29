@@ -6,7 +6,7 @@ from pytz import timezone
 from enum import Enum
 
 
-class Bag(Enum):
+class Bag(str,Enum):
     SMALL = "5 KILO"
     MEDIUM = "10 KILO"
     LARGE = "25 KILO"
