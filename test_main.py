@@ -153,5 +153,35 @@ def test_create_transaction_bad_requets():
 
     assert res.status_code == 400
 
+def test_get_transaction():
+
+    res = client.get(url="/transaction",allow_redirects=True)
+
+    # Response body as bd 
+    bd = res.json()
+
+    with Session(engine) as session:
+
+        statement = select(Transaction)
+        results =  session.exec(statement).all()
+        db = [result.__dict__ for result in results]
+
+        assert len(bd) == len(db)
+
+        for i in range(len(db)):
+
+            # Check id 
+            assert db[i]['id'] == bd[i]['id']
+            # Check bag 
+            assert db[i]['bag'] == bd[i]['bag']
+            # Check quantity 
+            assert db[i]['quantity'] == bd[i]['quantity']
+            # Check price 
+            assert db[i]['price'] == bd[i]['price']
+            # Check stock id 
+            assert db[i]['stock_id'] == bd[i]['stock_id']
+
+        
+            
 
 
