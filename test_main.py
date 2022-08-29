@@ -1,7 +1,7 @@
 
 from fastapi.testclient import TestClient
 from main import app
-from models import Stock
+from models import (Stock,Transaction)
 from sqlmodel import Session,select
 from database import engine
 from random import randint
@@ -94,3 +94,40 @@ def test_update_stock_unprocessable_entity():
     res = client.put(url=f"/stock/{id}",json=data)
     # Check status code is 422
     assert res.status_code == 422
+
+def test_create_transaction():
+
+    data = {
+        'bag':'10KILO',
+        'quantity':2,
+        'stock_id':2
+    }
+    # Fire the request
+    res = client.post(url="/transaction",json=data,allow_redirects=True)
+    # Response body as bd
+    bd = res.json()
+    # Check status code 
+    assert res.status_code == 201
+
+    with Session(engine) as session:
+        # Fetch data from database 
+        db = session.get(Transaction,bd['id'])
+        # bd:Dict -> bd:Transaction 
+        bd = Transaction(**bd)
+
+        # Check id 
+        assert db.id == bd.id
+        # Check date 
+        assert db.date == bd.date
+        # Check bag 
+        assert db.bag == bd.bag
+        # Check quantity 
+        assert db.quantity == bd.quantity
+        # Check price 
+        assert db.price == bd.price
+        # Check stock id 
+        assert db.stock_id == bd.stock_id
+
+
+    
+
