@@ -182,6 +182,9 @@ def test_get_transaction():
             assert db[i]['stock_id'] == bd[i]['stock_id']
 
         
-            
+def test_delete_transaction_not_found():
+    id = 1
+    res = client.delete(url=f"/transaction/{id}")
+    assert res.status_code == 404
 
 
