@@ -1,8 +1,8 @@
 
 from fastapi import FastAPI
 from models import Stock,Transaction
-from database import engine,create_db_and_table
-from sqlmodel import SQLModel
+from database import create_db_and_table
+from routes import stock
 
 app = FastAPI()
 
@@ -10,7 +10,12 @@ app = FastAPI()
 def startup():
     create_db_and_table()
 
-@app.on_event("shutdown")
-def shutdown():
-    print("welcome")
+@app.get("/",status_code=200,tags=['Root'])
+def root():
+    return
+
+app.include_router(stock.router)
+
+
+
 
