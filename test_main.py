@@ -141,5 +141,17 @@ def test_create_transaction_404_status():
 
     assert res.status_code == 404
 
+def test_create_transaction_bad_requets():
+
+    data = {
+        'bag':'10KILO',
+        'quantity':100,
+        'stock_id':6
+    }
+
+    res = client.post(url="/transaction",json=data,allow_redirects=True)
+
+    assert res.status_code == 400
+
 
 
