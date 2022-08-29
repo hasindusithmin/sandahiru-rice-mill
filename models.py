@@ -7,9 +7,9 @@ from enum import Enum
 
 
 class Bag(str,Enum):
-    SMALL = "5KILO"
-    MEDIUM = "10KILO"
-    LARGE = "25KILO"
+    small = "5KILO"
+    medium = "10KILO"
+    large = "25KILO"
 
 
 class Stock(SQLModel,table=True):
