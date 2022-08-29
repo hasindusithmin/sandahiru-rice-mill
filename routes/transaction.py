@@ -19,10 +19,8 @@ async def create_transaction(transaction:Transaction):
             raise HTTPException(status_code=404,detail="stock not found")
         # Bag Type and Quantity
         bag, qty = transaction.bag.name, transaction.quantity
-        cmd = f"if stock.{bag} < qty:\n\traise HTTPException(status_code=400,detail='insufficient quantity')"
-        exec(cmd)
-        cmd = f"stock.{bag} -= qty"
-        exec(cmd)
+        exec(f"if stock.{bag} < qty:\n\traise HTTPException(status_code=400,detail='insufficient quantity')")
+        exec(f"stock.{bag} -= qty")
         session.add(stock)
         session.commit()
         # ____________Create Transaction____________ 
@@ -39,3 +37,34 @@ async def get_transaction():
     with Session(engine) as session:
         statement = select(Transaction)
         return session.exec(statement).all()
+
+# Delete transaction By Id
+@router.delete("/{id}",status_code=202)
+async def delete_transaction(id:int):
+    with Session(engine) as session:
+        # Get transaction by Id
+        transaction = session.get(Transaction,id)
+        # If transaction not exist
+        if transaction is None:
+            raise HTTPException(status_code=404)
+        # ________Update stock Table________
+        stock_id = transaction.stock_id
+        bags = {"5KILO":"small","10KILO":"medium","25KILO":"large"}
+        bag = bags[transaction.bag]
+        stock = session.get(Stock,stock_id)
+        # print(stock)
+        qty = transaction.quantity
+        # If stock not exist
+        if stock is None:
+            raise HTTPException(status_code=404)
+        exec(f"if qty > stock.{bag}:\n\traise HTTPException(status_code=400,detail='insufficient quantity')")
+        exec(f"stock.{bag} += qty")
+        # print(stock)
+        session.add(stock)
+        session.commit()
+        # ________Update transaction table________
+        session.delete(transaction)
+        session.commit()
+        return
+
+
