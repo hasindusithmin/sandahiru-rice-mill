@@ -129,5 +129,17 @@ def test_create_transaction():
         assert db.stock_id == bd.stock_id
 
 
-    
+def test_create_transaction_404_status():
+
+    data = {
+        'bag':'10KILO',
+        'quantity':2,
+        'stock_id':20
+    }
+
+    res = client.post(url="/transaction",json=data,allow_redirects=True)
+
+    assert res.status_code == 404
+
+
 
